@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Просмотр документа</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .document, .document td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<a th:href="@{/editdoc(id=${document.id})}" href="edit_doc.html">[Редактировать документ]</a>
+
+<h2 th:text="${document.docType.name}">Документ</h2>
+<h3 th:text="'Статус: ' + ${document.docStatus.name}">Статус</h3>
+
+<div th:text="${document.dateCreated != null} ? ${'Дата создания: ' + #dates.format(document.dateCreated.toInstant() , 'dd-MM-yyyy HH:mm:ss')} : ''"></div>
+<div th:text="${document.creator != null} ? ${'Создатель: ' + document.creator.lastname + ' ' + document.creator.name  + ' ' + document.creator.getSurename()}: ''"></div>
+<br>
+
+<table class="document">
+    <thead>
+    </thead>
+    <tbody>
+    <tr>
+        <th align="right">Идентификатор:</th>
+        <td th:text="${document.id}">Id</td>
+    </tr>
+    <tr>
+        <th align="right">Номер документа:</th>
+        <td th:text="${document.docNumber}">Номер</td>
+    </tr>
+    <tr>
+        <th align="right">Тема:</th>
+        <td th:text="${document.subject}">Тема:</td>
+    </tr>
+    <tr>
+        <th align="right">Содержание:</th>
+        <td th:text="${document.description}">Содержание:</td>
+    </tr>
+
+    <tr th:each="fileStore : ${document.fileStoreList}">
+        <th align="right">Файл:</th>
+        <td>
+            <a th:href="'/files/' + ${fileStore.id}" href="view_doc.html" th:text="${fileStore.fileName}">Файл</a>
+        </td>
+    </tr>
+
+    </tbody>
+</table>
+<br>
+
+</body>
+</html>

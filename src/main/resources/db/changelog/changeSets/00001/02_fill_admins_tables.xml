@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/changeSets/00001/02_fill_admins_tables.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="20210611194658" author="User: VictorCheremisin Email: victor.cheremisin@gmail.com" context="schema">
+        <sql>
+            INSERT INTO dictionaries.doc_type(code, name) VALUES('LETTER', 'Письмо');
+            INSERT INTO dictionaries.doc_type(code, name) VALUES('NOTE', 'Служебная записка');
+            INSERT INTO dictionaries.doc_type(code, name) VALUES('ORDER', 'Приказ');
+
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('DRAFT', 'Черновик');
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('CORRECTION', 'Доработка');
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('DISPATCHER', 'Диспетчер');
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('SIGHTING', 'Визирование');
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('APPROVAL', 'Утверждение');
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('ACTIVE', 'Действует');
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('REFUS', 'Отказано');
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('ARCHIVE', 'Архив');
+            INSERT INTO dictionaries.doc_status(code, name) VALUES('DELETED', 'Удалено');
+
+            INSERT INTO administration.user(username, password, lastname, name, surename, position) VALUES ('user1', 'user1', 'Иванов', 'Иван', 'Иванович', 'Сотрудник');
+            INSERT INTO administration.user(username, password, lastname, name, surename, position) VALUES ('user2', 'user2', 'Петров', 'Пётр', 'Петрович', 'Делопроизводитель');
+            INSERT INTO administration.user(username, password, lastname, name, surename, position) VALUES ('user3', 'user3', 'Борисов', 'Борис', 'Борисович', 'PR-менеджер');
+            INSERT INTO administration.user(username, password, lastname, name, surename, position) VALUES ('user4', 'user4', 'Семёнов', 'Семён', 'Семёнович', 'QR-менеджер');
+            INSERT INTO administration.user(username, password, lastname, name, surename, position) VALUES ('user5', 'user5', 'Александров', 'Александр', 'Александрович', 'Директор');
+            INSERT INTO administration.user(username, password, lastname, name, surename, position) VALUES ('admin', 'admin', 'Васильев', 'Василий', 'Васильевич', 'Системный администратор');
+
+            INSERT INTO administration.role(name, description) VALUES ('EMPLOYEE', 'Сотрудник');
+            INSERT INTO administration.role(name, description) VALUES ('DISPATCHER', 'Диспетчер');
+            INSERT INTO administration.role(name, description) VALUES ('SIGHTING', 'Визирующий');
+            INSERT INTO administration.role(name, description) VALUES ('APPROVER', 'Утверждающий');
+            INSERT INTO administration.role(name, description) VALUES ('ADMIN', 'Администратор');
+
+            INSERT INTO administration.user_role(username, role) VALUES ('user1', 'EMPLOYEE');
+            INSERT INTO administration.user_role(username, role) VALUES ('user2', 'DISPATCHER');
+            INSERT INTO administration.user_role(username, role) VALUES ('user3', 'SIGHTING');
+            INSERT INTO administration.user_role(username, role) VALUES ('user4', 'SIGHTING');
+            INSERT INTO administration.user_role(username, role) VALUES ('user5', 'APPROVER');
+            INSERT INTO administration.user_role(username, role) VALUES ('admin', 'ADMIN');
+
+            INSERT INTO administration.action(code, name) VALUES('NEW', 'Создать');
+            INSERT INTO administration.action(code, name) VALUES('EDIT', 'Редактировать');
+            INSERT INTO administration.action(code, name) VALUES('VIEW', 'Просмотр');
+            INSERT INTO administration.action(code, name) VALUES('SAVE', 'Сохранить');
+            INSERT INTO administration.action(code, name) VALUES('DELETE', 'Удалить');
+
+
+<!--            Жизненный цикл документов-->
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'LETTER', 'DRAFT', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'LETTER', 'DRAFT', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'LETTER', 'DISPATCHER', 'CORRECTION');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'LETTER', 'DISPATCHER', 'SIGHTING');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'LETTER', 'ACTIVE', 'ARCHIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('SIGHTING', 'LETTER', 'SIGHTING', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('SIGHTING', 'LETTER', 'SIGHTING', 'APPROVAL');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('APPROVER', 'LETTER', 'APPROVAL', 'ACTIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('APPROVER', 'LETTER', 'APPROVAL', 'REFUS');
+
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'NOTE', 'DRAFT', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'NOTE', 'DRAFT', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'NOTE', 'DISPATCHER', 'CORRECTION');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'NOTE', 'DISPATCHER', 'SIGHTING');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'NOTE', 'ACTIVE', 'ARCHIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('SIGHTING', 'NOTE', 'SIGHTING', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('SIGHTING', 'NOTE', 'SIGHTING', 'APPROVAL');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('APPROVER', 'NOTE', 'APPROVAL', 'ACTIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('APPROVER', 'NOTE', 'APPROVAL', 'REFUS');
+
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'ORDER', 'DRAFT', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'ORDER', 'DRAFT', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'ORDER', 'DISPATCHER', 'CORRECTION');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'ORDER', 'DISPATCHER', 'SIGHTING');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('DISPATCHER', 'ORDER', 'ACTIVE', 'ARCHIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('SIGHTING', 'ORDER', 'SIGHTING', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('SIGHTING', 'ORDER', 'SIGHTING', 'APPROVAL');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('APPROVER', 'ORDER', 'APPROVAL', 'ACTIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('APPROVER', 'ORDER', 'APPROVAL', 'REFUS');
+
+
+<!--            Доступные действия-->
+            INSERT INTO administration.available_action(role, doc_type_code, status_code, action_code) VALUES ('EMPLOYEE', 'LETTER', 'DRAFT', 'EDIT');
+            INSERT INTO administration.available_action(role, doc_type_code, status_code, action_code) VALUES ('EMPLOYEE', 'LETTER', 'DRAFT', 'SAVE');
+            INSERT INTO administration.available_action(role, doc_type_code, status_code, action_code) VALUES ('EMPLOYEE', 'NOTE', 'DRAFT', 'EDIT');
+            INSERT INTO administration.available_action(role, doc_type_code, status_code, action_code) VALUES ('EMPLOYEE', 'NOTE', 'DRAFT', 'SAVE');
+            INSERT INTO administration.available_action(role, doc_type_code, status_code, action_code) VALUES ('EMPLOYEE', 'ORDER', 'DRAFT', 'EDIT');
+            INSERT INTO administration.available_action(role, doc_type_code, status_code, action_code) VALUES ('EMPLOYEE', 'ORDER', 'DRAFT', 'SAVE');
+
+        </sql>
+        <comment>
+            Initial script
+        </comment>
+    </changeSet>
+</databaseChangeLog>

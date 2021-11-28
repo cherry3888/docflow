@@ -1,0 +1,27 @@
+version: '3'
+services:
+  app:
+    image: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    privileged: true
+    container_name: app
+    ports:
+      - 8080:8080
+    env_file:
+      - develop.env
+    environment:
+      - WAIT_FOR=postgres:5432
+    networks:
+      - net1
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    env_file:
+      - develop.env
+    networks:
+      - net1
+networks:
+  net1:

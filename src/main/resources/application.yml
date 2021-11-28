@@ -1,0 +1,48 @@
+spring:
+  datasource:
+# *** For local postgres ***
+#    url: jdbc:postgresql://localhost:5432/docflow
+#    initialization-mode: always
+#    username: postgres
+#    password: postgres
+#    driver-class-name: org.postgresql.Driver
+
+# *** For postgers in docker ***
+    url: ${POSTGRES_URL}/${POSTGRES_DB}
+    initialization-mode: always
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: ${POSTGRES_DRIVER}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.xml
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  file:
+    name: "logs/logdata.log"
+
+hystrix:
+  dashboard:
+    proxy-stream-allow-list: "*"

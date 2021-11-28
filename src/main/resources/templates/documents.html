@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список документов</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .documents, .documents td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Документы</h1>
+
+<form th:method="GET" th:action="@{/adddoc}">
+    <button type="submit">Новый документ</button>
+</form>
+
+<table class="documents">
+    <thead>
+    <tr>
+        <th>Идентификатор</th>
+        <th>Номер документа</th>
+        <th>Дата создания</th>
+        <th>Инициатор</th>
+        <th>Тип документа</th>
+        <th>Статус</th>
+        <th>Тема</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="document : ${documents}">
+        <td th:text="${document.id}">1</td>
+        <td th:text="${document.docNumber}">Document Number</td>
+        <td th:text="${#dates.format(document.dateCreated.toInstant(), 'dd-MM-yyyy HH:mm:ss')}">Created</td>
+        <td th:text="${document.creator.lastname + ' ' + document.creator.name  + ' ' + document.creator.getSurename()}">Creator</td>
+        <td th:text="${document.docType.name}">Document Type</td>
+        <td th:text="${document.docStatus.name}">Status</td>
+        <td th:text="${document.subject}">Subject</td>
+        <td>
+            <a th:href="@{/viewdoc(id=${document.id})}" href="view_doc.html">Открыть</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
