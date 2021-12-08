@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/changeSets/00001/01_create_tables.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="20210611194658" author="User: VictorCheremisin Email: victor.cheremisin@gmail.com" context="schema">
+        <sql>
+
+            CREATE SCHEMA dictionaries;
+
+            CREATE TABLE dictionaries.doc_type
+            (
+                code    VARCHAR(32)  NOT NULL PRIMARY KEY,
+                name    VARCHAR(255) NOT NULL,
+                deleted BOOLEAN
+            );
+            COMMENT ON TABLE dictionaries.doc_type IS 'Типы документов';
+            COMMENT ON COLUMN dictionaries.doc_type.code IS 'Код';
+            COMMENT ON COLUMN dictionaries.doc_type.name IS 'Наименование';
+            COMMENT ON COLUMN dictionaries.doc_type.deleted IS 'Признак удаления';
+
+
+            CREATE TABLE dictionaries.doc_status
+            (
+                code    VARCHAR(32)  NOT NULL PRIMARY KEY,
+                name    VARCHAR(255) NOT NULL,
+                deleted BOOLEAN
+            );
+            COMMENT ON TABLE dictionaries.doc_status IS 'Статусы документов';
+            COMMENT ON COLUMN dictionaries.doc_status.code IS 'Код';
+            COMMENT ON COLUMN dictionaries.doc_status.name IS 'Наименование';
+            COMMENT ON COLUMN dictionaries.doc_status.deleted IS 'Признак удаления';
+
+
+            CREATE SCHEMA administration;
+
+            CREATE TABLE administration.user
+            (
+                username VARCHAR(255) NOT NULL PRIMARY KEY,
+                password VARCHAR(255) NOT NULL,
+                lastname VARCHAR(255) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                surename VARCHAR(255),
+                position VARCHAR(255)
+            );
+            COMMENT ON TABLE administration.user IS 'Пользователи';
+            COMMENT ON COLUMN administration.user.username IS 'Логин пользователя';
+            COMMENT ON COLUMN administration.user.password IS 'Пароль';
+            COMMENT ON COLUMN administration.user.lastname IS 'Фамилия';
+            COMMENT ON COLUMN administration.user.name IS 'Имя';
+            COMMENT ON COLUMN administration.user.surename IS 'Отчество';
+            COMMENT ON COLUMN administration.user.position IS 'Должность';
+
+
+            CREATE TABLE administration.role
+            (
+                name VARCHAR(32) NOT NULL PRIMARY KEY,
+                description VARCHAR(255) NOT NULL
+            );
+            COMMENT ON TABLE administration.role IS 'Роли пользователей';
+            COMMENT ON COLUMN administration.role.name IS 'Роль';
+            COMMENT ON COLUMN administration.role.description IS 'Описание';
+
+
+            CREATE TABLE administration.user_role
+            (
+                username VARCHAR(32) NOT NULL,
+                role VARCHAR(32) NOT NULL,
+                FOREIGN KEY (username) REFERENCES administration.user (username) ON DELETE CASCADE,
+                FOREIGN KEY (role) REFERENCES administration.role (name) ON DELETE CASCADE,
+                UNIQUE (username, role)
+            );
+            COMMENT ON TABLE administration.user_role IS 'Пользователь - Роль';
+
+
+            CREATE TABLE administration.action
+            (
+                code    VARCHAR(32)  NOT NULL PRIMARY KEY,
+                name    VARCHAR(255) NOT NULL
+            );
+            COMMENT ON TABLE administration.action IS 'Действия';
+            COMMENT ON COLUMN administration.action.code IS 'Код';
+            COMMENT ON COLUMN administration.action.name IS 'Наименование';
+
+
+            CREATE SEQUENCE available_status_seq start 1;
+
+            CREATE TABLE administration.available_status (
+                id BIGINT DEFAULT NEXTVAL('available_status_seq') PRIMARY KEY,
+                role VARCHAR(32) NOT NULL,
+                doc_type_code VARCHAR(32) NOT NULL,
+                status_code VARCHAR(32) NOT NULL,
+                next_status_code VARCHAR(32) NOT NULL,
+                CONSTRAINT available_status_role_fk FOREIGN KEY (role) REFERENCES administration.role(name),
+                CONSTRAINT available_status_doc_type_fk FOREIGN KEY (doc_type_code) REFERENCES dictionaries.doc_type(code),
+                CONSTRAINT available_status_status_code_fk FOREIGN KEY (status_code) REFERENCES dictionaries.doc_status(code),
+                CONSTRAINT available_next_status_status_code_fk FOREIGN KEY (status_code) REFERENCES dictionaries.doc_status(code),
+                UNIQUE (doc_type_code, status_code, role, next_status_code)
+            );
+            COMMENT ON TABLE administration.available_status IS 'Доступные статусы документа';
+            COMMENT ON COLUMN administration.available_status.id IS 'Идентификатор';
+            COMMENT ON COLUMN administration.available_status.role IS 'Код роли пользователя';
+            COMMENT ON COLUMN administration.available_status.doc_type_code IS 'Код типа документа';
+            COMMENT ON COLUMN administration.available_status.status_code IS 'Код статуса';
+            COMMENT ON COLUMN administration.available_status.next_status_code IS 'Код следующего статуса';
+
+
+            CREATE SEQUENCE available_action_seq start 1;
+
+            CREATE TABLE administration.available_action (
+                id BIGINT DEFAULT NEXTVAL('available_action_seq') PRIMARY KEY,
+                role VARCHAR(32) NOT NULL,
+                doc_type_code VARCHAR(32) NOT NULL,
+                status_code VARCHAR(32) NOT NULL,
+                action_code VARCHAR(32) NOT NULL,
+                CONSTRAINT available_status_role_fk FOREIGN KEY (role) REFERENCES administration.role(name),
+                CONSTRAINT available_status_doc_type_fk FOREIGN KEY (doc_type_code) REFERENCES dictionaries.doc_type(code),
+                CONSTRAINT available_status_status_code_fk FOREIGN KEY (status_code) REFERENCES dictionaries.doc_status(code),
+                CONSTRAINT available_action_action_code_fk FOREIGN KEY (action_code) REFERENCES administration.action(code),
+                UNIQUE (doc_type_code, status_code, role, action_code)
+            );
+            COMMENT ON TABLE administration.available_action IS 'Доступные действия';
+            COMMENT ON COLUMN administration.available_action.id IS 'Идентификатор';
+            COMMENT ON COLUMN administration.available_action.role IS 'Код роли пользователя';
+            COMMENT ON COLUMN administration.available_action.doc_type_code IS 'Код типа документа';
+            COMMENT ON COLUMN administration.available_action.status_code IS 'Код статуса';
+            COMMENT ON COLUMN administration.available_action.action_code IS 'Доступное действие';
+
+
+            CREATE SCHEMA documents;
+
+            CREATE SEQUENCE document_seq start 1;
+
+            CREATE TABLE documents.document(
+                id BIGINT DEFAULT NEXTVAL('document_seq') PRIMARY KEY,
+                doc_number VARCHAR(32) NOT NULL,
+                subject VARCHAR(255) NOT NULL,
+                description VARCHAR(1000),
+                doc_type_code VARCHAR(32) NOT NULL,
+                status_code VARCHAR(32) NOT NULL,
+                date_created timestamp with time zone not null default now(),
+                date_changed timestamp with time zone not null default now(),
+                creator_username VARCHAR(255) NOT NULL,
+                dispatcher_username VARCHAR(255),
+                sighting_username VARCHAR(255),
+                approver_username VARCHAR(255),
+                CONSTRAINT document_doc_type_code_fk FOREIGN KEY (doc_type_code) REFERENCES dictionaries.doc_type(code),
+                CONSTRAINT document_status_code_fk FOREIGN KEY (status_code) REFERENCES dictionaries.doc_status(code),
+                CONSTRAINT document_creator_username_fk FOREIGN KEY (creator_username) REFERENCES administration.user(username),
+                CONSTRAINT document_dispatcher_username_fk FOREIGN KEY (dispatcher_username) REFERENCES administration.user(username),
+                CONSTRAINT document_sighting_username_fk FOREIGN KEY (sighting_username) REFERENCES administration.user(username),
+                CONSTRAINT document_approver_username_fk FOREIGN KEY (approver_username) REFERENCES administration.user(username)
+            );
+            COMMENT ON TABLE documents.document IS 'Документы';
+            COMMENT ON COLUMN documents.document.id IS 'Идентификатор';
+            COMMENT ON COLUMN documents.document.doc_number IS 'Номер документа';
+            COMMENT ON COLUMN documents.document.subject IS 'Тема документа';
+            COMMENT ON COLUMN documents.document.description IS 'Описание';
+            COMMENT ON COLUMN documents.document.doc_type_code IS 'Идентификатор типа документа';
+            COMMENT ON COLUMN documents.document.status_code IS 'Идентификатор статуса документа';
+            COMMENT ON COLUMN documents.document.date_created IS 'Дата и время создания документа';
+            COMMENT ON COLUMN documents.document.date_created IS 'Дата и время изменения документа';
+            COMMENT ON COLUMN documents.document.creator_username IS 'Идентификатор создателя документа';
+            COMMENT ON COLUMN documents.document.dispatcher_username IS 'Идентификатор диспетчера';
+            COMMENT ON COLUMN documents.document.sighting_username IS 'Идентификатор визирующего';
+            COMMENT ON COLUMN documents.document.approver_username IS 'Идентификатор утвеждающего';
+
+
+            CREATE SEQUENCE comment_seq start 1;
+                CREATE TABLE documents.comment(
+                id BIGINT DEFAULT NEXTVAL('comment_seq') PRIMARY KEY,
+                document_id BIGINT NOT NULL,
+                comment VARCHAR(1000) NOT NULL,
+                CONSTRAINT comment_document_id_fk FOREIGN KEY (document_id) REFERENCES documents.document(id)
+            );
+
+
+            CREATE SEQUENCE file_store_seq start 1;
+
+            CREATE TABLE documents.file_store(
+                id BIGINT DEFAULT NEXTVAL('file_store_seq') PRIMARY KEY,
+                document_id BIGINT NOT NULL,
+                file_name VARCHAR(255) NOT NULL,
+                data BYTEA NOT NULL,
+                CONSTRAINT file_store_document_id_fk FOREIGN KEY (document_id) REFERENCES documents.document(id)
+            );
+            COMMENT ON TABLE documents.file_store IS 'Файлы';
+            COMMENT ON COLUMN documents.file_store.id IS 'Идентификатор';
+            COMMENT ON COLUMN documents.file_store.file_name IS 'Имя файла';
+            COMMENT ON COLUMN documents.file_store.file_name IS 'Данные файла';
+        </sql>
+        <comment>
+            Initial script
+        </comment>
+    </changeSet>
+</databaseChangeLog>

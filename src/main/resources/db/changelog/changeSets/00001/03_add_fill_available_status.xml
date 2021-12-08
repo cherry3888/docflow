@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/changeSets/00001/03_add_fill_available_status.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="20210611194658" author="User: VictorCheremisin Email: victor.cheremisin@gmail.com" context="schema">
+        <sql>
+<!--            Жизненный цикл документов-->
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'LETTER', 'DRAFT', 'DRAFT');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'LETTER', 'CORRECTION', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'LETTER', 'CORRECTION', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'DRAFT', 'DRAFT');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'DRAFT', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'DRAFT', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'CORRECTION', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'CORRECTION', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'DISPATCHER', 'CORRECTION');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'DISPATCHER', 'SIGHTING');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'ACTIVE', 'ARCHIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'SIGHTING', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'SIGHTING', 'APPROVAL');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'APPROVAL', 'ACTIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'LETTER', 'APPROVAL', 'REFUS');
+
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'NOTE', 'DRAFT', 'DRAFT');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'NOTE', 'CORRECTION', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'NOTE', 'CORRECTION', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'DRAFT', 'DRAFT');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'DRAFT', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'DRAFT', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'CORRECTION', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'CORRECTION', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'DISPATCHER', 'CORRECTION');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'DISPATCHER', 'SIGHTING');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'ACTIVE', 'ARCHIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'SIGHTING', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'SIGHTING', 'APPROVAL');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'APPROVAL', 'ACTIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'NOTE', 'APPROVAL', 'REFUS');
+
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'ORDER', 'DRAFT', 'DRAFT');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'ORDER', 'CORRECTION', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('EMPLOYEE', 'ORDER', 'CORRECTION', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'DRAFT', 'DRAFT');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'DRAFT', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'DRAFT', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'CORRECTION', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'CORRECTION', 'DELETED');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'DISPATCHER', 'CORRECTION');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'DISPATCHER', 'SIGHTING');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'ACTIVE', 'ARCHIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'SIGHTING', 'DISPATCHER');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'SIGHTING', 'APPROVAL');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'APPROVAL', 'ACTIVE');
+            INSERT INTO administration.available_status(role, doc_type_code, status_code, next_status_code) VALUES ('ADMIN', 'ORDER', 'APPROVAL', 'REFUS');
+        </sql>
+        <comment>
+            Добавлена возможность для EMPLOYEE схранать Черновики и все права для ADMIN
+        </comment>
+    </changeSet>
+</databaseChangeLog>

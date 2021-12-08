@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit document</title>
+
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        .document, .document td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<form th:method="POST" th:action="@{/savedoc}" th:object="${document}" action="edit_doc.html" enctype="multipart/form-data">
+
+    <h2 th:text="${document.docType.name}">Документ</h2>
+    <h3 th:text="'Статус: ' + ${document.docStatus.name}">Статус</h3>
+
+    <div th:text="${document.dateCreated != null} ? ${'Дата создания: ' + #dates.format(document.dateCreated.toInstant() , 'dd-MM-yyyy HH:mm:ss')} : ''"></div>
+    <div th:text="${document.creator != null} ? ${'Создатель: ' + document.creator.lastname + ' ' + document.creator.name  + ' ' + document.creator.getSurename()}: ''"></div>
+    <br>
+
+    <table class="document">
+        <thead>
+        </thead>
+        <tbody>
+        <tr>
+            <th align="right">Идентификатор:</th>
+            <td><input size="30" type="text" readonly th:field="${document.id}"/></td>
+        </tr>
+        <tr>
+            <th align="right">Номер документа:</th>
+            <td><input size="30" type="text"
+                       th:readonly="${document.docStatus != null and (document.docStatus.code != 'DRAFT' and document.docStatus.code != 'CORRECTION')}"
+                       required th:field="${document.docNumber}"/></td>
+        </tr>
+        <tr>
+            <th align="right">Тип документа:</th>
+            <td><select
+                    th:disabled="${document.docStatus != null and (document.docStatus.code != 'DRAFT' and document.docStatus.code != 'CORRECTION')}"
+                    th:field="${document.docType}">
+                <option th:each="doctype : ${doctypes}" th:value="${doctype.code}" th:text="${doctype.name}">Тип
+                    документа
+                </option>
+            </select></td>
+        </tr>
+        <tr>
+            <th align="right">Перевести на стутус:</th>
+            <td><select th:field="${document.docStatus}">
+                <option th:each="docstatus : ${availableStatuses}" th:value="${docstatus.code}"
+                        th:text="${docstatus.name}">
+                    Тип документа
+                </option>
+            </select></td>
+        </tr>
+        <tr>
+            <th align="right">Заголовок:</th>
+            <td><input size="150" type="text"
+                       th:readonly="${document.docStatus != null and (document.docStatus.code != 'DRAFT' and document.docStatus.code != 'CORRECTION')}"
+                       required th:field="${document.subject}"/></td>
+        </tr>
+        <tr>
+            <th align="right">Содержание:</th>
+            <td><textarea rows="20" cols="120" type="text" maxlength="1000"
+                          th:readonly="${document.docStatus != null and (document.docStatus.code != 'DRAFT' and document.docStatus.code != 'CORRECTION')}"
+                          required th:field="${document.description}"></textarea></td>
+        </tr>
+
+        <tr th:each="fileStore : ${document.fileStoreList}">
+            <th align="right">Файл:</th>
+            <td>
+                <a th:href="'/files/' + ${fileStore.id}" href="edit_doc.html" th:text="${fileStore.fileName}">Файл</a>
+            </td>
+        </tr>
+
+        <tr>
+            <th align="right">Добавить файлы:</th>
+            <td>
+                <input class="form-control" id="files" multiple
+                       name="files" placeholder="Upload Multiple Files" type="file"></input>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <div class="row">
+        <button type="submit">Сохранить и закрыть</button>
+    </div>
+</form>
+
+</body>
+</html>
